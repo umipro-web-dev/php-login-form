@@ -21,7 +21,7 @@
         </div>
 
     <!-- modal -->
-    <div class="modal fade h-100" aria-labelledby="title" id="loading" data-bs-backdrop="static" data-bs-keyboard="true" v-if="!will_push">
+    <div class="modal fade h-100" aria-labelledby="title" id="loading" data-bs-backdrop="static" data-bs-keyboard="true" >
         <div class="modal-dialog h-100 mt-5 pt-5"  role="document">
             <div class="modal-content h-50" style="margin: auto 0;">
                 <div class="modal-header ">
@@ -66,7 +66,6 @@ const router = useRouter();
 const submit_end = ref("登録中...");
 const description = ref("");
 const delay_check = ref(false);
-const will_push = ref(false);
 
 watch(submit_end, async (newval: string) => {
     if (newval === "完了！") {
@@ -84,6 +83,7 @@ const submit = async () => {
         email: email.value,
         pass: pass.value
     }
+
     const req_opt: RequestInit = {
         method: "POST",
         headers: {
