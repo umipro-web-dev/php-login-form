@@ -23,23 +23,23 @@
             <div class="modal-dialog h-100 mt-5 pt-5"  role="document">
                 <div class="modal-content h-50" style="margin: auto 0;">
                     <div class="modal-header ">
-                        <h5 class="modal-title" id="title">{{ submit_end }}</h5>
+                        <h5 class="modal-title" id="title">{{ submit_status_text }}</h5>
                     </div>
-                    <div class="loader mb-0 pb-3 " v-if="submit_end === '登録中...'" style="margin-bottom: 5.75em!important;">Loading...</div>
-                    <div class="err mx-auto my-auto h-100 pt-5" v-if="submit_end === 'エラー'">
+                    <div class="loader mb-0 pb-3 " v-if="submit_status_text === '登録中...'" style="margin-bottom: 5.75em!important;">Loading...</div>
+                    <div class="err mx-auto my-auto h-100 pt-5" v-if="submit_status_text === 'エラー'">
                         <img src="/batsu.png" alt="エラー" width="120" class="pt-3"/>
                         <br>
                     </div>
-                    <div class="fin" v-if="submit_end === '完了！'">
+                    <div class="fin" v-if="submit_status_text === '完了！'">
                         <label >
                         <input type="checkbox" :checked="delay_check" disabled>
                         <span><i></i></span>
                         </label>
                     </div>
-                    <div class="modal-footer" style="justify-content: left!important;" v-if="submit_end !== '登録中...'">
+                    <div class="modal-footer" style="justify-content: left!important;" v-if="submit_status_text !== '登録中...'">
                         <h>{{ description }}</h> 
-                        <div class="w-17" v-if="submit_end === 'エラー'"></div>
-                        <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_end === 'エラー'" >閉じる</button>
+                        <div class="w-17" v-if="submit_status_text === 'エラー'"></div>
+                        <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_status_text === 'エラー'" >閉じる</button>
                     </div>
                 </div>
             </div>
@@ -55,11 +55,11 @@ import { sleep } from "sleep-ts";
 
 const username = ref("");
 const pass = ref("");
-const submit_end = ref("登録中...");
+const submit_status_text = ref("登録中...");
 const description = ref("");
 const delay_check = ref(false);
 
-watch(submit_end, async (newval: string) => {
+watch(submit_status_text, async (newval: string) => {
     if (newval === "完了！") {
         await sleep(500);
         delay_check.value = true;
@@ -87,17 +87,17 @@ const submit = async () => {
 
     const res = await fetch("/api/newUser.php", req_opt);
     if (res.status === 400) {
-        submit_end.value = "エラー";
+        submit_status_text.value = "エラー";
         description.value = "入力形式に誤りがあります。";
         return;
     }
     if (!res.ok && res.status !== 400) {
-        submit_end.value = "エラー";
+        submit_status_text.value = "エラー";
         description.value = "時間をおいてもう一度お試しください。"
         return;
     }
 
-    submit_end.value = "完了！"
+    submit_status_text.value = "完了！"
     description.value = "登録が完了しました。自動的にホーム画面に遷移します。"
 
     await sleep(2000);
