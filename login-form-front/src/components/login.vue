@@ -11,7 +11,7 @@
             <span class="form-text">20文字以内の記号を含まない文字で入力してください。</span>
             <br>
             <label for="pass" class="form-label mt-4">パスワード</label>
-            <input type="password" class="form-control" id="pass" />
+            <input type="password" class="form-control" id="pass" v-model="pass"/>
             <span class="form-text">5〜20文字の英数字で入力してください。</span>
             <br>
             <br>
@@ -85,7 +85,7 @@ const submit = async () => {
         body: JSON.stringify(req_body_json)
     }
 
-    const res = await fetch("/api/newUser.php", req_opt);
+    const res = await fetch("/api/login.php", req_opt);
     if (res.status === 400) {
         submit_status_text.value = "エラー";
         description.value = "入力形式に誤りがあります。";
@@ -93,12 +93,12 @@ const submit = async () => {
     }
     if (!res.ok && res.status !== 400) {
         submit_status_text.value = "エラー";
-        description.value = "時間をおいてもう一度お試しください。"
+        description.value = "時間をおいてもう一度お試しください。";
         return;
     }
 
-    submit_status_text.value = "完了！"
-    description.value = "登録が完了しました。自動的にホーム画面に遷移します。"
+    submit_status_text.value = "完了！";
+    description.value = "登録が完了しました。自動的にホーム画面に遷移します。";
 
     await sleep(2000);
     document.querySelector(".modal-backdrop")!.remove();

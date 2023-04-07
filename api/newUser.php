@@ -6,10 +6,9 @@ require_once "../class_parse_array.php";
 
 use \Firebase\JWT\JWT;
 
-const SECRET_KEY = getenv("JWT_PASS");
-const DEFAULT_ALG = getenv("JWT_ALG");
-
 function main(): string {
+$SECRET_KEY = getenv("JWT_PASS");
+$DEFAULT_ALG = getenv("JWT_ALG");
 
 $req_json = json_decode(file_get_contents(("php://input")), true);
 
@@ -46,7 +45,7 @@ $jwt_payload = [
     'iss' => 'umipro_web'
 ];
 
-$token = JWT::encode($jwt_payload, SECRET_KEY, DEFAULT_ALG);
+$token = JWT::encode($jwt_payload, $SECRET_KEY, $DEFAULT_ALG);
 
 
 
