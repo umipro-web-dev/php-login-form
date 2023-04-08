@@ -38,10 +38,9 @@
                     <span><i></i></span>
                     </label>
                 </div>
-                <div class="modal-footer" style="justify-content: left!important;" v-if="submit_status_text !== '登録中...'">
-                    <h>{{ description }}</h> 
-                    <div class="w-17" v-if="submit_status_text === 'エラー'"></div>
-                    <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_status_text === 'エラー'">閉じる</button>
+                <div class="modal-footer" style="display: block!important;" v-if="submit_status_text !== '登録中...'">
+                    <h style="float: left;" :class="description === 'このユーザー名・メールアドレスはすでに存在しています。' ? 'footer-text-small' : 'footer-text'">{{ description }}</h>
+                    <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_status_text === 'エラー'" style="float: right;">閉じる</button>
                 </div>
             </div>
         </div>
@@ -93,14 +92,15 @@ const submit = async () => {
     }
 
     const res = await fetch("/api/newUser.php", req_opt);
-    if (res.status === 400) {
+    if (res.status >= 400 == res.status < 500) {
       submit_status_text.value = "エラー";
-      description.value = "入力形式に誤りがあります。";
-        return;
+      description.value = await res.text();
+      return;
     }
-    if (!res.ok && res.status !== 400) {
+
+    if (res.status >= 500) {
       submit_status_text.value = "エラー";
-      description.value = "時間をおいてもう一度お試しください。"
+      description.value = "時間をおいてもう一度お試しください。";
       return;
     }
 
@@ -272,5 +272,13 @@ const submit = async () => {
 
 .w-17 {
   width: 17%;
+}
+
+.footer-text {
+    font-size: 1em;
+}
+
+.footer-text-small {
+  font-size: 0.88em;
 }
 </style>

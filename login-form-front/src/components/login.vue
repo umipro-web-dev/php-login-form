@@ -36,10 +36,9 @@
                         <span><i></i></span>
                         </label>
                     </div>
-                    <div class="modal-footer" style="justify-content: left!important;" v-if="submit_status_text !== '登録中...'">
-                        <h>{{ description }}</h> 
-                        <div class="w-17" v-if="submit_status_text === 'エラー'"></div>
-                        <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_status_text === 'エラー'" >閉じる</button>
+                    <div class="modal-footer" style="display: block!important;" v-if="submit_status_text !== '登録中...'">
+                        <h style="float: left;" class="footer-text">{{ description }}</h>
+                        <button class="btn btn-primary ml-3" data-bs-dismiss="modal" v-if="submit_status_text === 'エラー'" style="float: right;">閉じる</button>
                     </div>
                 </div>
             </div>
@@ -86,19 +85,19 @@ const submit = async () => {
     }
 
     const res = await fetch("/api/login.php", req_opt);
-    if (res.status === 400) {
+    if (res.status >= 400 == res.status < 500) {
         submit_status_text.value = "エラー";
-        description.value = "入力形式に誤りがあります。";
+        description.value = await res.text();
         return;
     }
-    if (!res.ok && res.status !== 400) {
+    if (res.status >= 500) {
         submit_status_text.value = "エラー";
         description.value = "時間をおいてもう一度お試しください。";
         return;
     }
 
     submit_status_text.value = "完了！";
-    description.value = "登録が完了しました。自動的にホーム画面に遷移します。";
+    description.value = "ログインに成功しました。自動的にホーム画面に遷移します。";
 
     await sleep(2000);
     document.querySelector(".modal-backdrop")!.remove();
@@ -287,4 +286,10 @@ const submit = async () => {
 
 .w-17 {
     width: 17%;
-}</style>
+}
+
+.footer-text {
+    font-size: 0.88em;
+}
+
+</style>
