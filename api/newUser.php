@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
+ini_set('display_errors', 0);
+
 require_once "../vendor/autoload.php";
-require_once "../class_parse_array.php";
 
 use \Firebase\JWT\JWT;
 
@@ -20,7 +21,7 @@ $isValid = (preg_match('/^[^\x20-\x7e]{1,20}$/', $username) || preg_match('/^\w{
 
 if (!$isValid) {
     http_response_code(400);
-    return "Bad Request";
+    return "入力形式に誤りがあります。";
 }
 
 $db = new SQLite3("../database/user_info.db");
@@ -30,9 +31,11 @@ $query->bindValue(':username', $username, SQLITE3_TEXT);
 $query->bindValue(':email', $email, SQLITE3_TEXT);
 $query->bindValue(':pass', $hash_pass, SQLITE3_TEXT);
 $result = $query->execute();
+
+// uniqueでエラーが起きた時
 if($result == false) {
-    http_response_code(500);
-    return "Internal Server Error";
+    http_response_code(400);
+    return "このユーザー名・メールアドレスはすでに存在しています。";
 }
 
 $db->close();

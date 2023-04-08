@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+ini_set('display_errors', 0);
+
 require_once "../vendor/autoload.php";
 require_once "../class_parse_array.php";
 
@@ -20,33 +22,26 @@ function main(): string
     $username = $req_json["username"];
     $pass = $req_json["pass"];
 
-    $isValid = (preg_match('/^[^\x20-\x7e]{1,20}$/', $username) || preg_match('/^\w{1,20}$/', $username)) && preg_match('/^(\w){5,20}$/', $pass);
-
-    if (!$isValid) {
-        http_response_code(400);
-        return "Bad Request";
-    }
-
     $db = new SQLite3("../database/user_info.db");
     $query = $db->prepare("SELECT password from users where username = :username");
     $query->bindValue(':username', $username, SQLITE3_TEXT);
     $result = $query->execute();
 
     if ($result == false) {
-        http_response_code(400);
-        return "Bad Request";
+        http_response_code(500);
+        return "Internal server error";
     }
 
     $result_arr = $result->fetchArray(SQLITE3_ASSOC);
 
     if ($result_arr == false) {
         http_response_code(401);
-        return 'Invalid username';
+        return '存在しないユーザー名です。';
     }
 
     if (!password_verify($pass, $result_arr["password"])) {
         http_response_code(401);
-        return "Invalid password";
+        return "パスワードが間違っています。";
     }
 
     $db->close();

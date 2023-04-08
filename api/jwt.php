@@ -27,3 +27,4 @@ $decoded = JWT::decode($encoded, new KEY($key, $alg));
 $decoded = class_parse_array($decoded);
 
 print_r($decoded);
+ 
